@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WHBF DMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Auth0 SDK com fallback dinâmico (será carregado via script se necessário) -->
+  <style>
+    body {
+      background: #000;
+      color: #ff0000;
+      font-family: 'Courier New', Courier, monospace;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      overflow-x: hidden;
+      position: relative;
+    }
+    .card {
+      background: #000;
+      border: 2px solid #8a0002;
+      border-radius: 12px;
+      padding: 4rem 2rem;
+      max-width: 900px;
+      text-align: center;
+      box-shadow: 0 0 30px #8a0002;
+      margin-bottom: 2rem;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+    .link-card {
+      width: 20%;
+      height: auto;
+      background: #000;
+      border: 1px solid rgba(220, 38, 38, 0.5);
+      border-radius: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+      box-shadow: 0 0 15px #8a0002;
+      text-decoration: none;
+      color: inherit;
+      padding: 1rem 0.5rem;
+    }
+    .link-card:hover {
+      transform: scale(1.05);
+    }
+    .circle {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid #8a0002;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+      background: #000;
+      font-size: 1.5rem;
+      color: #ff0000;
+      font-weight: bold;
+    }
+    .link-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    footer {
+      margin-top: auto;
+      padding: 3rem 0 1.5rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+      position: relative;
+      z-index: 2;
+    }
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      color: #8a0002;
+      user-select: none;
+      pointer-events: none;
+      animation: fall linear infinite;
+      z-index: 1;
+    }
+    @keyframes fall {
+      from { transform: translateY(-10vh); }
+      to { transform: translateY(110vh); }
+    }
+    @media (max-width: 900px) {
+      .link-card {
+        width: 45%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 class="text-5xl mb-6 tracking-widest">WHBF DMS</h1>
+    <p class="text-xl mb-10 text-red-300 leading-relaxed">
+      Pesquisa de mensagens de servidores de Discord
+    </p>
+
+    <div class="link-row" style="margin-top: 0;">
+      <button id="btn-login" class="link-card" style="cursor: pointer; border: none; width: auto; padding: 1rem 2rem;">
+        <div class="text-lg font-bold text-red-500">Login</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="text-gray-500 mb-10 text-sm tracking-widest">- Information -</p>
+      <div class="link-row">
+        <a href="https://whbf.cc/" target="_blank" class="link-card">
+          <img src="/assets/whbf.png" class="w-20 h-20 rounded-full border border-red-600 mb-4 object-cover">
+          <div class="text-lg font-bold text-red-500">WHBF</div>
+          <div class="text-xs text-gray-400 mt-1">Main Website</div>
+        </a>
+      </div>
+
+    <div class="link-row">
+      <a href="https://www.roblox.com/communities/703659855/WHBF#!/about" target="_blank" class="link-card">
+        <img src="/assets/whbf.png" class="w-20 h-20 rounded-full border border-red-600 mb-4 object-cover">
+        <div class="text-lg font-bold text-red-500">WHBF</div>
+        <div class="text-xs text-gray-400 mt-1">Main Roblox Group</div>
+      </a>
+
+      <a href="https://discord.gg/6kurJR2BtK" target="_blank" class="link-card">
+        <img src="/assets/whbf.png" class="w-20 h-20 rounded-full border border-red-600 mb-4 object-cover">
+        <div class="text-lg font-bold text-red-500">WHBF Center</div>
+        <div class="text-xs text-gray-400 mt-1">Discord Server</div>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 whbf.cc
+  </footer>
+
+  <!-- Falling snowflakes -->
+  <script>
+    function createSnowflake() {
+      const flake = document.createElement('div');
+      flake.className = 'snowflake';
+      flake.style.left = Math.random() * 100 + 'vw';
+      flake.style.fontSize = Math.random() * 14 + 8 + 'px';
+      flake.style.animationDuration = Math.random() * 6 + 8 + 's';
+      flake.innerText = '❆';
+      document.body.appendChild(flake);
+      setTimeout(() => flake.remove(), 15000);
+    }
+    setInterval(createSnowflake, 180);
+  </script>
+
+  <!-- Auth0 com fallback -->
+  <script>
+    const auth0Config = {
+      domain: "jfgf346jgh45gf45345fgf5375hdf.eu.auth0.com",
+      clientId: "dp5B11JyDCwAFefLCjtDgQaOvHardheD",
+      redirectUri: window.location.origin + "/dashboard.html"
+    };
+
+    let client = null;
+    let authInitialized = false;
+
+    // Carrega o script do Auth0 dinamicamente se necessário
+    function loadAuth0Script(callback) {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js';
+      script.onload = callback;
+      script.onerror = () => {
+        console.error('Falha ao carregar o script do Auth0. Verifique bloqueadores.');
+        alert('Não foi possível carregar o serviço de autenticação. Desabilite bloqueadores de script e recarregue a página.');
+      };
+      document.head.appendChild(script);
+    }
+
+    async function initAuth() {
+      // Se a função não existir, tenta carregar o script
+      if (typeof createAuth0Client === 'undefined') {
+        console.warn('createAuth0Client não definido. Tentando carregar script...');
+        loadAuth0Script(() => {
+          // Após carregar, chama initAuth novamente
+          initAuth();
+        });
+        return;
+      }
+
+      try {
+        console.log("Inicializando Auth0...");
+        client = await createAuth0Client({
+          domain: auth0Config.domain,
+          client_id: auth0Config.clientId,
+          redirect_uri: auth0Config.redirectUri
+        });
+        authInitialized = true;
+        console.log("Auth0 inicializado com sucesso");
+
+        // Processa callback de login
+        if (window.location.search.includes("code=") && window.location.search.includes("state=")) {
+          console.log("Callback detectado, processando...");
+          await client.handleRedirectCallback();
+          window.location.replace("/dashboard.html");
+        }
+      } catch (error) {
+        console.error("Erro ao inicializar Auth0:", error);
+        alert("Erro ao conectar com serviço de autenticação. Verifique o console.");
+      }
+    }
+
+    document.getElementById("btn-login").onclick = async () => {
+      console.log("Botão de login clicado");
+      if (!authInitialized) {
+        console.log("Auth0 ainda não inicializado, tentando novamente...");
+        await initAuth();
+      }
+      if (client) {
+        try {
+          await client.loginWithRedirect({
+            authorizationParams: { redirect_uri: auth0Config.redirectUri }
+          });
+        } catch (error) {
+          console.error("Erro ao redirecionar para login:", error);
+          alert("Falha no login. Verifique o console.");
+        }
+      } else {
+        console.error("Cliente Auth0 não disponível");
+        // Tenta inicializar mais uma vez
+        initAuth();
+        alert("Serviço de autenticação indisponível. Tente novamente mais tarde.");
+      }
+    };
+
+    window.addEventListener("load", initAuth);
+  </script>
+
+  <!-- Title animation -->
+  <script>
+    const titles = ["2","23","238","2382","23826","2382","238","23"];
+    let tIndex = 0;
+    setInterval(() => {
+      document.title = titles[tIndex];
+      tIndex = (tIndex + 1) % titles.length;
+    }, 500);
+  </script>
+</body>
+</html>

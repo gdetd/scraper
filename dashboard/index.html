@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WHBF DMS - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+  <style>
+    body {
+      background: #000;
+      color: #ff0000;
+      font-family: 'Courier New', Courier, monospace;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      overflow-x: hidden;
+      position: relative;
+    }
+    /* Container do dashboard com fundo preto e acima dos flocos */
+    .dashboard-container {
+      background: #000;
+      border: 2px solid #8a0002;
+      border-radius: 12px;
+      padding: 3rem 2rem;
+      max-width: 1200px;
+      width: 100%;
+      box-shadow: 0 0 30px #8a0002;
+      position: relative;
+      z-index: 2;
+    }
+    /* Inputs e botões no estilo dos cards */
+    input, button {
+      background: #000;
+      border: 1px solid #8a0002;
+      color: #ff0000;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: #ff4d4d;
+    }
+    button {
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #1a0000;
+      transform: scale(1.02);
+    }
+    .btn-red {
+      background: #000;
+      border: 1px solid #8a0002;
+      color: #ff0000;
+    }
+    .btn-red:hover {
+      background: #330000;
+    }
+    footer {
+      margin-top: auto;
+      padding: 3rem 0 1.5rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+      position: relative;
+      z-index: 2;
+    }
+    /* Flocos de neve atrás do conteúdo */
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      color: #8a0002;
+      user-select: none;
+      pointer-events: none;
+      animation: fall linear infinite;
+      z-index: 1;
+    }
+    @keyframes fall {
+      from { transform: translateY(-10vh); }
+      to { transform: translateY(110vh); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <div class="flex justify-between items-center mb-10">
+      <h1 class="text-4xl">Pesquisador de Mensagens</h1>
+      <button id="btn-logout" class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded">
+        Sair
+      </button>
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-4 mb-8">
+      <input id="author-id" type="text" placeholder="ID do autor (ex: 123456789012345678)"
+             class="flex-1 bg-black border border-red-700 rounded px-5 py-4 text-lg focus:outline-none focus:border-red-400">
+      <input id="keyword" type="text" placeholder="Palavra-chave (opcional)"
+             class="flex-1 bg-black border border-red-700 rounded px-5 py-4 text-lg focus:outline-none focus:border-red-400">
+      <button id="btn-search" class="btn-red px-10 py-4 text-lg">
+        Pesquisar
+      </button>
+    </div>
+
+    <div id="results" class="bg-black/60 border border-red-800 rounded p-6 min-h-[400px] max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-base leading-relaxed">
+      Resultados aparecerão aqui...
+    </div>
+
+    <p id="result-info" class="text-right mt-4 text-gray-400 text-sm"></p>
+  </div>
+
+  <footer>
+    © 2025 whbf.cc
+  </footer>
+
+  <!-- Falling snowflakes -->
+  <script>
+    function createSnowflake() {
+      const flake = document.createElement('div');
+      flake.className = 'snowflake';
+      flake.style.left = Math.random() * 100 + 'vw';
+      flake.style.fontSize = Math.random() * 14 + 8 + 'px';
+      flake.style.animationDuration = Math.random() * 6 + 8 + 's';
+      flake.innerText = '❆';
+      document.body.appendChild(flake);
+      setTimeout(() => flake.remove(), 15000);
+    }
+    setInterval(createSnowflake, 180);
+  </script>
+
+  <!-- Auth0 -->
+  <script>
+    const auth0 = {
+      domain: "jfgf346jgh45gf45345fgf5375hdf.eu.auth0.com",
+      clientId: "dp5B11JyDCwAFefLCjtDgQaOvHardheD",
+      redirectUri: window.location.origin + "/dashboard.html"
+    };
+
+    let client = null;
+
+    async function initAuth() {
+      client = await createAuth0Client({
+        domain: auth0.domain,
+        client_id: auth0.clientId,
+        redirect_uri: auth0.redirectUri
+      });
+
+      const isLoggedIn = await client.isAuthenticated();
+
+      if (!isLoggedIn) {
+        // Redireciona para a página de login se não estiver autenticado
+        window.location.replace("/");
+        return;
+      }
+
+      // Se estiver logado, exibe o dashboard (já está visível)
+    }
+
+    document.getElementById("btn-logout").onclick = async () => {
+      await client.logout({
+        logoutParams: { returnTo: window.location.origin + "/" }
+      });
+    };
+
+    document.getElementById("btn-search").onclick = () => {
+      const author = document.getElementById("author-id").value.trim();
+      const kw = document.getElementById("keyword").value.trim();
+      const results = document.getElementById("results");
+      const info = document.getElementById("result-info");
+
+      if (!author && !kw) {
+        results.innerHTML = "Indica pelo menos o ID do autor ou uma palavra-chave.";
+        return;
+      }
+
+      results.innerHTML = "A pesquisar mensagens...\n\n";
+
+      // Simulação de busca (substituir pela chamada real ao backend)
+      setTimeout(() => {
+        results.innerHTML = 
+          `Exemplo de resultados para ${author ? "autor " + author : ""} ${kw ? '"' + kw + '"' : ""}:\n\n` +
+          "2026-03-05 19:42  Alguém disse: olá pessoal\n" +
+          "2026-03-06 02:15  Discussão sobre o evento de sábado\n" +
+          "...\n\n" +
+          "(substitui este texto pelo fetch ao teu backend)";
+        info.textContent = "Resultados simulados • 12 mensagens encontradas";
+      }, 1500);
+    };
+
+    window.addEventListener("load", initAuth);
+  </script>
+</body>
+</html>
