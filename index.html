@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WHBF DMS</title>
+  <title>WHBF DMS - Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Auth0 SDK com fallback dinâmico (será carregado via script se necessário) -->
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.17/auth0-spa-js.production.js"></script>
   <style>
     body {
       background: #000;
@@ -20,58 +20,46 @@
       overflow-x: hidden;
       position: relative;
     }
-    .card {
+    /* Container do dashboard com fundo preto e acima dos flocos */
+    .dashboard-container {
       background: #000;
       border: 2px solid #8a0002;
       border-radius: 12px;
-      padding: 4rem 2rem;
-      max-width: 900px;
-      text-align: center;
-      box-shadow: 0 0 30px #8a0002;
-      margin-bottom: 2rem;
+      padding: 3rem 2rem;
+      max-width: 1200px;
       width: 100%;
+      box-shadow: 0 0 30px #8a0002;
       position: relative;
       z-index: 2;
     }
-    .link-card {
-      width: 20%;
-      height: auto;
+    /* Inputs e botões no estilo dos cards */
+    input, button {
       background: #000;
-      border: 1px solid rgba(220, 38, 38, 0.5);
-      border-radius: 0.75rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s;
-      box-shadow: 0 0 15px #8a0002;
-      text-decoration: none;
-      color: inherit;
-      padding: 1rem 0.5rem;
-    }
-    .link-card:hover {
-      transform: scale(1.05);
-    }
-    .circle {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      border: 2px solid #8a0002;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 0.75rem;
-      background: #000;
-      font-size: 1.5rem;
+      border: 1px solid #8a0002;
       color: #ff0000;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: #ff4d4d;
+    }
+    button {
+      cursor: pointer;
+      transition: all 0.2s;
       font-weight: bold;
     }
-    .link-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-top: 1.5rem;
+    button:hover {
+      background: #1a0000;
+      transform: scale(1.02);
+    }
+    .btn-red {
+      background: #000;
+      border: 1px solid #8a0002;
+      color: #ff0000;
+    }
+    .btn-red:hover {
+      background: #330000;
     }
     footer {
       margin-top: auto;
@@ -82,6 +70,7 @@
       position: relative;
       z-index: 2;
     }
+    /* Flocos de neve atrás do conteúdo */
     .snowflake {
       position: absolute;
       top: -10px;
@@ -95,50 +84,33 @@
       from { transform: translateY(-10vh); }
       to { transform: translateY(110vh); }
     }
-    @media (max-width: 900px) {
-      .link-card {
-        width: 45%;
-      }
-    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1 class="text-5xl mb-6 tracking-widest">WHBF DMS</h1>
-    <p class="text-xl mb-10 text-red-300 leading-relaxed">
-      Pesquisa de mensagens de servidores de Discord
-    </p>
 
-    <div class="link-row" style="margin-top: 0;">
-      <button id="btn-login" class="link-card" style="cursor: pointer; border: none; width: auto; padding: 1rem 2rem;">
-        <div class="text-lg font-bold text-red-500">Login</div>
+  <div class="dashboard-container">
+    <div class="flex justify-between items-center mb-10">
+      <h1 class="text-4xl">Pesquisador de Mensagens</h1>
+      <button id="btn-logout" class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded">
+        Sair
       </button>
     </div>
-  </div>
 
-  <div class="card">
-    <p class="text-gray-500 mb-10 text-sm tracking-widest">- Information -</p>
-      <div class="link-row">
-        <a href="https://whbf.cc/" target="_blank" class="link-card">
-          <img src="/assets/whbf.png" class="w-20 h-20 rounded-full border border-red-600 mb-4 object-cover">
-          <div class="text-lg font-bold text-red-500">WHBF</div>
-          <div class="text-xs text-gray-400 mt-1">Main Website</div>
-        </a>
-      </div>
-
-    <div class="link-row">
-      <a href="https://www.roblox.com/communities/703659855/WHBF#!/about" target="_blank" class="link-card">
-        <img src="/assets/whbf.png" class="w-20 h-20 rounded-full border border-red-600 mb-4 object-cover">
-        <div class="text-lg font-bold text-red-500">WHBF</div>
-        <div class="text-xs text-gray-400 mt-1">Main Roblox Group</div>
-      </a>
-
-      <a href="https://discord.gg/6kurJR2BtK" target="_blank" class="link-card">
-        <img src="/assets/whbf.png" class="w-20 h-20 rounded-full border border-red-600 mb-4 object-cover">
-        <div class="text-lg font-bold text-red-500">WHBF Center</div>
-        <div class="text-xs text-gray-400 mt-1">Discord Server</div>
-      </a>
+    <div class="flex flex-col md:flex-row gap-4 mb-8">
+      <input id="author-id" type="text" placeholder="ID do autor (ex: 123456789012345678)"
+             class="flex-1 bg-black border border-red-700 rounded px-5 py-4 text-lg focus:outline-none focus:border-red-400">
+      <input id="keyword" type="text" placeholder="Palavra-chave (opcional)"
+             class="flex-1 bg-black border border-red-700 rounded px-5 py-4 text-lg focus:outline-none focus:border-red-400">
+      <button id="btn-search" class="btn-red px-10 py-4 text-lg">
+        Pesquisar
+      </button>
     </div>
+
+    <div id="results" class="bg-black/60 border border-red-800 rounded p-6 min-h-[400px] max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-base leading-relaxed">
+      Resultados aparecerão aqui...
+    </div>
+
+    <p id="result-info" class="text-right mt-4 text-gray-400 text-sm"></p>
   </div>
 
   <footer>
@@ -160,96 +132,66 @@
     setInterval(createSnowflake, 180);
   </script>
 
-  <!-- Auth0 com fallback -->
+  <!-- Auth0 -->
   <script>
-    const auth0Config = {
+    const auth0 = {
       domain: "jfgf346jgh45gf45345fgf5375hdf.eu.auth0.com",
       clientId: "dp5B11JyDCwAFefLCjtDgQaOvHardheD",
       redirectUri: window.location.origin + "/dashboard.html"
     };
 
     let client = null;
-    let authInitialized = false;
-
-    // Carrega o script do Auth0 dinamicamente se necessário
-    function loadAuth0Script(callback) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js';
-      script.onload = callback;
-      script.onerror = () => {
-        console.error('Falha ao carregar o script do Auth0. Verifique bloqueadores.');
-        alert('Não foi possível carregar o serviço de autenticação. Desabilite bloqueadores de script e recarregue a página.');
-      };
-      document.head.appendChild(script);
-    }
 
     async function initAuth() {
-      // Se a função não existir, tenta carregar o script
-      if (typeof createAuth0Client === 'undefined') {
-        console.warn('createAuth0Client não definido. Tentando carregar script...');
-        loadAuth0Script(() => {
-          // Após carregar, chama initAuth novamente
-          initAuth();
-        });
+      client = await createAuth0Client({
+        domain: auth0.domain,
+        clientId: auth0.clientId,  // Changed from client_id
+        redirectUri: auth0.redirectUri
+      });
+
+      const isLoggedIn = await client.isAuthenticated();
+
+      if (!isLoggedIn) {
+        // Redireciona para a página de login se não estiver autenticado
+        window.location.replace("/");
         return;
       }
 
-      try {
-        console.log("Inicializando Auth0...");
-        client = await createAuth0Client({
-          domain: auth0Config.domain,
-          client_id: auth0Config.clientId,
-          redirect_uri: auth0Config.redirectUri
-        });
-        authInitialized = true;
-        console.log("Auth0 inicializado com sucesso");
-
-        // Processa callback de login
-        if (window.location.search.includes("code=") && window.location.search.includes("state=")) {
-          console.log("Callback detectado, processando...");
-          await client.handleRedirectCallback();
-          window.location.replace("/dashboard.html");
-        }
-      } catch (error) {
-        console.error("Erro ao inicializar Auth0:", error);
-        alert("Erro ao conectar com serviço de autenticação. Verifique o console.");
-      }
+      // Se estiver logado, exibe o dashboard (já está visível)
     }
 
-    document.getElementById("btn-login").onclick = async () => {
-      console.log("Botão de login clicado");
-      if (!authInitialized) {
-        console.log("Auth0 ainda não inicializado, tentando novamente...");
-        await initAuth();
+    document.getElementById("btn-logout").onclick = async () => {
+      await client.logout({
+        logoutParams: { returnTo: window.location.origin + "/" }
+      });
+    };
+
+    document.getElementById("btn-search").onclick = () => {
+      const author = document.getElementById("author-id").value.trim();
+      const kw = document.getElementById("keyword").value.trim();
+      const results = document.getElementById("results");
+      const info = document.getElementById("result-info");
+
+      if (!author && !kw) {
+        results.innerHTML = "Indica pelo menos o ID do autor ou uma palavra-chave.";
+        return;
       }
-      if (client) {
-        try {
-          await client.loginWithRedirect({
-            authorizationParams: { redirect_uri: auth0Config.redirectUri }
-          });
-        } catch (error) {
-          console.error("Erro ao redirecionar para login:", error);
-          alert("Falha no login. Verifique o console.");
-        }
-      } else {
-        console.error("Cliente Auth0 não disponível");
-        // Tenta inicializar mais uma vez
-        initAuth();
-        alert("Serviço de autenticação indisponível. Tente novamente mais tarde.");
-      }
+
+      results.innerHTML = "A pesquisar mensagens...\n\n";
+
+      // Simulação de busca (substituir pela chamada real ao backend)
+      setTimeout(() => {
+        results.innerHTML = 
+          `Exemplo de resultados para ${author ? "autor " + author : ""} ${kw ? '"' + kw + '"' : ""}:\n\n` +
+          "2026-03-05 19:42  Alguém disse: olá pessoal\n" +
+          "2026-03-06 02:15  Discussão sobre o evento de sábado\n" +
+          "...\n\n" +
+          "(substitui este texto pelo fetch ao teu backend)";
+        info.textContent = "Resultados simulados • 12 mensagens encontradas";
+      }, 1500);
     };
 
     window.addEventListener("load", initAuth);
-  </script>
-
-  <!-- Title animation -->
-  <script>
-    const titles = ["2","23","238","2382","23826","2382","238","23"];
-    let tIndex = 0;
-    setInterval(() => {
-      document.title = titles[tIndex];
-      tIndex = (tIndex + 1) % titles.length;
-    }, 500);
   </script>
 </body>
 </html>
