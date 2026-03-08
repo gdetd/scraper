@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WHBF DMS - Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -84,7 +85,7 @@
 <body>
   <div class="dashboard-container">
     <div class="flex justify-between items-center mb-10">
-      <h1 class="text-4xl">WHBF DMS</h1>
+      <h1 class="text-4xl">Pesquisador de Mensagens</h1>
       <button id="btn-logout" class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded">
         Sair
       </button>
@@ -123,6 +124,15 @@
       setTimeout(() => flake.remove(), 15000);
     }
     setInterval(createSnowflake, 180);
+  </script>
+
+  <script>
+    const titles = ["2","23","238","2382","23826","2382","238","23"];
+    let tIndex = 0;
+    setInterval(() => {
+      document.title = titles[tIndex];
+      tIndex = (tIndex + 1) % titles.length;
+    }, 500);
   </script>
 
   <script type="module">
