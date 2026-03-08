@@ -161,54 +161,47 @@
     setInterval(createSnowflake, 180);
   </script>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ",
-    authDomain: "gsrgszsgz.firebaseapp.com",
-    projectId: "gsrgszsgz",
-    storageBucket: "gsrgszsgz.firebasestorage.app",
-    messagingSenderId: "896231461425",
-    appId: "1:896231461425:web:f5e1692a5d727ff1ed7b10"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ",
+      authDomain: "gsrgszsgz.firebaseapp.com",
+      projectId: "gsrgszsgz",
+      storageBucket: "gsrgszsgz.firebasestorage.app",
+      messagingSenderId: "896231461425",
+      appId: "1:896231461425:web:f5e1692a5d727ff1ed7b10"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-  // Listen for auth state changes and redirect if logged in
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      window.location.href = "/dashboard";  // or wherever your dashboard is
-    }
-  });
+    document.getElementById("btn-login").onclick = async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
-  // Attach login handler to the button
-  document.getElementById("btn-login").onclick = async () => {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+      if (!email || !password) {
+        document.getElementById("error-msg").textContent = "Please enter email and password";
+        return;
+      }
 
-    if (!email || !password) {
-      document.getElementById("error-msg").textContent = "Please enter email and password";
-      return;
-    }
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        // Only redirect AFTER successful manual login
+        window.location.href = "/dashboard";  // or "/dashboard.html" — adjust as needed
+      } catch (error) {
+        let errorMessage = "Login failed";
+        if (error.code === 'auth/invalid-email') errorMessage = "Invalid email format";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') errorMessage = "Invalid email or password";
+        if (error.code === 'auth/too-many-requests') errorMessage = "Too many attempts – try again later";
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // Success: onAuthStateChanged will catch it and redirect
-    } catch (error) {
-      let errorMessage = "Login failed";
-      if (error.code === 'auth/invalid-email') errorMessage = "Invalid email format";
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') errorMessage = "Invalid email or password";
-      if (error.code === 'auth/too-many-requests') errorMessage = "Too many attempts – try again later";
+        document.getElementById("error-msg").textContent = errorMessage;
+        console.error(error);
+      }
+    };
+  </script>
 
-      document.getElementById("error-msg").textContent = errorMessage;
-      console.error(error);
-    }
-  };
-</script>
-  
   <!-- Title animation -->
   <script>
     const titles = ["2","23","238","2382","23826","2382","238","23"];
