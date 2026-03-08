@@ -115,6 +115,14 @@
   <footer>
     © 2025 whbf.cc
   </footer>
+  
+  <script>
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "/";
+      }
+    });
+  </script>
 
   <!-- Falling snowflakes -->
   <script>
