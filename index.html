@@ -161,45 +161,53 @@
     setInterval(createSnowflake, 180);
   </script>
 
-  <script>
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ",
-      authDomain: "gsrgszsgz.firebaseapp.com",
-      projectId: "gsrgszsgz",
-      storageBucket: "gsrgszsgz.firebasestorage.app",
-      messagingSenderId: "896231461425",
-      appId: "1:896231461425:web:f5e1692a5d727ff1ed7b10"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ",
+    authDomain: "gsrgszsgz.firebaseapp.com",
+    projectId: "gsrgszsgz",
+    storageBucket: "gsrgszsgz.firebasestorage.app",
+    messagingSenderId: "896231461425",
+    appId: "1:896231461425:web:f5e1692a5d727ff1ed7b10"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-    document.getElementById("btn-login").onclick = async () => {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+  // Listen for auth state changes and redirect if logged in
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.location.href = "/dashboard.html";  // or wherever your dashboard is
+    }
+  });
 
-      if (!email || !password) {
-        document.getElementById("error-msg").textContent = "Please enter email and password";
-        return;
-      }
+  // Attach login handler to the button
+  document.getElementById("btn-login").onclick = async () => {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        // Success → redirect happens via onAuthStateChanged
-      } catch (error) {
-        let errorMessage = "Login failed";
-        if (error.code === 'auth/invalid-email') errorMessage = "Invalid email format";
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') errorMessage = "Invalid email or password";
-        if (error.code === 'auth/too-many-requests') errorMessage = "Too many attempts – try again later";
-        
-        document.getElementById("error-msg").textContent = errorMessage;
-        console.error(error);
-      }
-    };
-  </script>
+    if (!email || !password) {
+      document.getElementById("error-msg").textContent = "Please enter email and password";
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // Success: onAuthStateChanged will catch it and redirect
+    } catch (error) {
+      let errorMessage = "Login failed";
+      if (error.code === 'auth/invalid-email') errorMessage = "Invalid email format";
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') errorMessage = "Invalid email or password";
+      if (error.code === 'auth/too-many-requests') errorMessage = "Too many attempts – try again later";
+
+      document.getElementById("error-msg").textContent = errorMessage;
+      console.error(error);
+    }
+  };
+</script>
   
   <!-- Title animation -->
   <script>
