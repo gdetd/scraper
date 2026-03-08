@@ -109,10 +109,13 @@
       Pesquisa de mensagens de servidores de Discord
     </p>
 
-    <div class="link-row" style="margin-top: 0;">
-      <button id="btn-login" class="link-card" style="cursor: pointer; border: none; width: auto; padding: 1rem 2rem;">
+    <div class="link-row" style="margin-top: 0; flex-direction: column; gap: 1.5rem; align-items: center;">
+      <input id="email" type="email" placeholder="Mail" class="link-card" style="padding: 1rem 2rem; text-align: center;">
+      <input id="password" type="password" placeholder="Pswd" class="link-card" style="padding: 1rem 2rem; text-align: center;">
+      <button id="btn-login" class="link-card" style="padding: 1rem 2rem;">
         <div class="text-lg font-bold text-red-500">Login</div>
       </button>
+      <p id="error-msg" class="text-red-500 mt-2 text-center"></p>
     </div>
   </div>
 
